@@ -1,0 +1,19 @@
+version: '3.7'
+services:
+  cassandra:
+    image: cassandra:3.11
+    ports:
+      - 9042:9042
+    volumes:
+      - cassandra-data:/var/lib/cassandra
+    networks:
+      - cass
+    environment:
+      JVM_OPTS: "-Xmx1024m -Xms1024m"
+
+volumes:
+  cassandra-data:
+
+networks:
+  cass:
+    attachable: true
