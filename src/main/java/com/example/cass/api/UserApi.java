@@ -43,4 +43,9 @@ public class UserApi {
     public UserView addUser(@RequestBody AddUserRequest request) {
         return userService.addUser(request);
     }
+
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable("id") String id) {
+        userService.deleteUser(UUID.fromString(id));
+    }
 }

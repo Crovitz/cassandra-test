@@ -53,7 +53,7 @@ public class User {
         this.email = userByUsername.getEmail();
         this.createdAt = userByUsername.getCreatedAt();
         this.status = userByUsername.getStatus();
-        this.favouriteDay = favouriteDay;
+        this.favouriteDay = userByUsername.getFavouriteDay();
     }
 
     public User(UserByStatusAndFavouriteDay userByStatusAndFavouriteDay) {

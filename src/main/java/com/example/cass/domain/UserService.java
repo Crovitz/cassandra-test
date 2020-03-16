@@ -46,7 +46,19 @@ public class UserService {
     }
 
     public UserView addUser(AddUserRequest request) {
-        User user = userEntityService.save(new User(request.getUsername(), request.getEmail(), LocalDate.parse(request.getFavouriteDay())));
+        userEntityService.findByUsername(request.getUsername())
+                .ifPresent(user -> {
+                    throw new IllegalArgumentException("User already exists");
+                });
+
+        User user = userEntityService.save(
+                new User(request.getUsername(), request.getEmail(), LocalDate.parse(request.getFavouriteDay())));
         return conversionService.convert(user, UserView.class);
+    }
+
+    public void deleteUser(UUID id) {
+        User user = userEntityService.findById(id)
+                .orElseThrow(IllegalArgumentException::new);
+        userEntityService.delete(user);
     }
 }

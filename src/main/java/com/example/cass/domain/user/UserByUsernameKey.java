@@ -1,5 +1,6 @@
 package com.example.cass.domain.user;
 
+import org.springframework.data.cassandra.core.cql.Ordering;
 import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
 import org.springframework.data.cassandra.core.mapping.PrimaryKeyClass;
 import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
@@ -12,7 +13,7 @@ public class UserByUsernameKey {
     @PrimaryKeyColumn(name = "username", type = PrimaryKeyType.PARTITIONED)
     private String username;
 
-    @PrimaryKeyColumn(name = "id", type = PrimaryKeyType.CLUSTERED)
+    @PrimaryKeyColumn(name = "id", ordering = Ordering.DESCENDING)
     private UUID id;
 
     public UserByUsernameKey(String username, UUID id) {

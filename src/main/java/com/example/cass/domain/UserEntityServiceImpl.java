@@ -1,9 +1,7 @@
 package com.example.cass.domain;
 
 import com.example.cass.domain.user.User;
-import com.example.cass.domain.user.UserByStatusAndFavouriteDay;
-import com.example.cass.domain.user.UserByUsername;
-import com.example.cass.infrastructure.repository.UserByStatusRepository;
+import com.example.cass.infrastructure.repository.UserByStatusAndFavouriteDayRepository;
 import com.example.cass.infrastructure.repository.UserByUsernameRepository;
 import com.example.cass.infrastructure.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -18,13 +16,13 @@ import java.util.stream.Collectors;
 public class UserEntityServiceImpl implements UserEntityService {
     private final UserRepository userRepository;
     private final UserByUsernameRepository userByUsernameRepository;
-    private final UserByStatusRepository userByStatusRepository;
+    private final UserByStatusAndFavouriteDayRepository userByStatusAndFavouriteDayRepository;
 
     public UserEntityServiceImpl(UserRepository userRepository, UserByUsernameRepository userByUsernameRepository,
-                                 UserByStatusRepository userByStatusRepository) {
+                                 UserByStatusAndFavouriteDayRepository userByStatusAndFavouriteDayRepository) {
         this.userRepository = userRepository;
         this.userByUsernameRepository = userByUsernameRepository;
-        this.userByStatusRepository = userByStatusRepository;
+        this.userByStatusAndFavouriteDayRepository = userByStatusAndFavouriteDayRepository;
     }
 
     @Override
@@ -39,21 +37,24 @@ public class UserEntityServiceImpl implements UserEntityService {
 
     @Override
     public Optional<User> findByUsername(String username) {
-        return userByUsernameRepository.findByKey_Username(username)
+        return userByUsernameRepository.findByKeyUsername(username)
                 .map(User::new);
     }
 
     @Override
     public List<User> findByStatusAndFavouriteDay(User.Status status, LocalDate favouriteDay) {
-        return userByStatusRepository.findByKey_StatusAndKey_FavouriteDay(status, favouriteDay).stream()
+        return userByStatusAndFavouriteDayRepository.findAllByKeyStatusAndKeyFavouriteDay(status, favouriteDay).stream()
                 .map(User::new)
                 .collect(Collectors.toList());
     }
 
     @Override
     public User save(User user) {
-        userByUsernameRepository.save(new UserByUsername(user));
-        userByStatusRepository.save(new UserByStatusAndFavouriteDay(user));
-        return userRepository.save(user);
+        return userRepository.insert(user);
+    }
+
+    @Override
+    public void delete(User user) {
+        userRepository.delete(user);
     }
 }

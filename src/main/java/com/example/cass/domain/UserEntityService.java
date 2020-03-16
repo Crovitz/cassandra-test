@@ -18,4 +18,6 @@ public interface UserEntityService {
     List<User> findByStatusAndFavouriteDay(User.Status status, LocalDate favouriteDay);
 
     User save(User user);
+
+    void delete(User user);
 }
