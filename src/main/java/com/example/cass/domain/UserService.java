@@ -1,8 +1,13 @@
 package com.example.cass.domain;
 
 import com.example.cass.api.AddUserRequest;
-import com.example.cass.api.UserView;
+import com.example.cass.api.model.UserByStatusAndFavouriteDayView;
+import com.example.cass.api.model.UserByUsernameView;
+import com.example.cass.api.model.UserView;
 import com.example.cass.domain.user.User;
+import com.example.cass.infrastructure.repository.UserByStatusAndFavouriteDayRepository;
+import com.example.cass.infrastructure.repository.UserByUsernameRepository;
+import com.example.cass.infrastructure.repository.UserRepository;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
@@ -13,52 +18,59 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService {
-    private final UserEntityService userEntityService;
+    private final UserRepository userRepository;
+    private final UserByUsernameRepository userByUsernameRepository;
+    private final UserByStatusAndFavouriteDayRepository userByStatusAndFavouriteDayRepository;
     private final ConversionService conversionService;
 
-    public UserService(UserEntityService userEntityService, ConversionService conversionService) {
-        this.userEntityService = userEntityService;
+    public UserService(UserRepository userRepository,
+                       UserByUsernameRepository userByUsernameRepository,
+                       UserByStatusAndFavouriteDayRepository userByStatusAndFavouriteDayRepository,
+                       ConversionService conversionService) {
+        this.userRepository = userRepository;
+        this.userByUsernameRepository = userByUsernameRepository;
+        this.userByStatusAndFavouriteDayRepository = userByStatusAndFavouriteDayRepository;
         this.conversionService = conversionService;
     }
 
     public List<UserView> getUsers() {
-        return userEntityService.findAll().stream()
+        return userRepository.findAll().stream()
                 .map(user -> conversionService.convert(user, UserView.class))
                 .collect(Collectors.toList());
     }
 
     public UserView getById(UUID id) {
-        return userEntityService.findById(id)
+        return userRepository.findById(id)
                 .map(user -> conversionService.convert(user, UserView.class))
                 .orElseThrow(IllegalArgumentException::new);
     }
 
-    public UserView getUserByUsername(String username) {
-        return userEntityService.findByUsername(username)
-                .map(user -> conversionService.convert(user, UserView.class))
+    public UserByUsernameView getUserByUsername(String username) {
+        return userByUsernameRepository.findByKeyUsername(username)
+                .map(user -> conversionService.convert(user, UserByUsernameView.class))
                 .orElse(null);
     }
 
-    public List<UserView> getByStatusAndFavouriteDay(User.Status status, LocalDate favouriteDay) {
-        return userEntityService.findByStatusAndFavouriteDay(status, favouriteDay).stream()
-                .map(user -> conversionService.convert(user, UserView.class))
+    public List<UserByStatusAndFavouriteDayView> getByStatusAndFavouriteDay(User.Status status, LocalDate favouriteDay) {
+        return userByStatusAndFavouriteDayRepository.findAllByKeyStatusAndKeyFavouriteDay(status, favouriteDay).stream()
+                .map(user -> conversionService.convert(user, UserByStatusAndFavouriteDayView.class))
                 .collect(Collectors.toList());
     }
 
     public UserView addUser(AddUserRequest request) {
-        userEntityService.findByUsername(request.getUsername())
+        userByUsernameRepository.findByKeyUsername(request.getUsername())
                 .ifPresent(user -> {
                     throw new IllegalArgumentException("User already exists");
                 });
 
-        User user = userEntityService.save(
+        User user = userRepository.insert(
                 new User(request.getUsername(), request.getEmail(), LocalDate.parse(request.getFavouriteDay())));
         return conversionService.convert(user, UserView.class);
     }
 
     public void deleteUser(UUID id) {
-        User user = userEntityService.findById(id)
+        User user = userRepository.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
-        userEntityService.delete(user);
+        userRepository.delete(user);
     }
 }

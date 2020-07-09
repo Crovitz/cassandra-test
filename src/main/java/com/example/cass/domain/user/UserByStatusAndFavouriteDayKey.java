@@ -1,12 +1,10 @@
 package com.example.cass.domain.user;
 
-import com.datastax.driver.core.DataType;
 import org.springframework.data.cassandra.core.cql.Ordering;
 import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
 import org.springframework.data.cassandra.core.mapping.CassandraType;
 import org.springframework.data.cassandra.core.mapping.PrimaryKeyClass;
 import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
-
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -14,7 +12,6 @@ import java.util.UUID;
 public class UserByStatusAndFavouriteDayKey {
 
     @PrimaryKeyColumn(name = "status", type = PrimaryKeyType.PARTITIONED)
-    @CassandraType(type = DataType.Name.TEXT)
     private User.Status status;
 
     @PrimaryKeyColumn(value = "favourite_day", ordinal = 0, ordering = Ordering.DESCENDING)

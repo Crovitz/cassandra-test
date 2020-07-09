@@ -1,6 +1,4 @@
-package com.example.cass.api;
-
-import com.example.cass.domain.user.User;
+package com.example.cass.api.model;
 
 import java.time.LocalDateTime;
 
@@ -9,9 +7,9 @@ public class UserView {
     private final String username;
     private final String email;
     private final LocalDateTime createdAt;
-    private final User.Status status;
+    private final String status;
 
-    public UserView(String id, String username, String email, LocalDateTime createdAt, User.Status status) {
+    public UserView(String id, String username, String email, LocalDateTime createdAt, String status) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -35,7 +33,7 @@ public class UserView {
         return createdAt;
     }
 
-    public User.Status getStatus() {
+    public String getStatus() {
         return status;
     }
 }

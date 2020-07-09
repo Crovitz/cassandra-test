@@ -1,5 +1,8 @@
 package com.example.cass.api;
 
+import com.example.cass.api.model.UserByStatusAndFavouriteDayView;
+import com.example.cass.api.model.UserByUsernameView;
+import com.example.cass.api.model.UserView;
 import com.example.cass.domain.UserService;
 import com.example.cass.domain.user.User;
 import org.springframework.web.bind.annotation.*;
@@ -28,12 +31,12 @@ public class UserApi {
     }
 
     @GetMapping("/search")
-    public UserView getUserByUsername(@RequestParam("username") String username) {
+    public UserByUsernameView getUserByUsername(@RequestParam("username") String username) {
         return userService.getUserByUsername(username);
     }
 
     @GetMapping("/status-and-day")
-    public List<UserView> getByStatus(
+    public List<UserByStatusAndFavouriteDayView> getByStatus(
             @RequestParam("status") String status,
             @RequestParam("day") String favouriteDay) {
         return userService.getByStatusAndFavouriteDay(User.Status.valueOf(status), LocalDate.parse(favouriteDay));

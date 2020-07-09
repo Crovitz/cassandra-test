@@ -1,12 +1,12 @@
-package com.example.cass.infrastructure;
+package com.example.cass.api.converter;
 
-import com.example.cass.api.UserView;
+import com.example.cass.api.model.UserView;
 import com.example.cass.domain.user.User;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserToUserViewConverter implements Converter<User, UserView> {
+public class UserToViewConverter implements Converter<User, UserView> {
 
     @Override
     public UserView convert(User source) {
@@ -15,6 +15,6 @@ public class UserToUserViewConverter implements Converter<User, UserView> {
                 source.getUsername(),
                 source.getEmail(),
                 source.getCreatedAt(),
-                source.getStatus());
+                source.getStatus().name());
     }
 }
